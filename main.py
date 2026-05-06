@@ -12,41 +12,19 @@ import json
 from datetime import datetime
 from typing import Optional, Union, List, Any, NamedTuple
 
-# ✅ 优先使用 PyQt6；当前虚拟环境只有 PyQt5 时自动进入兼容模式
-try:
-    from PyQt6.QtWidgets import (
-        QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-        QLabel, QComboBox, QLineEdit, QPushButton, QMessageBox, QTextEdit, QGroupBox,
-        QProgressBar, QStatusBar, QFrame, QSizePolicy, QListWidget, QListWidgetItem, QStackedWidget, QSpacerItem
-    )
-    from PyQt6.QtCore import Qt, QThread, pyqtSignal
-    from PyQt6.QtGui import QIcon, QFont
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QLabel, QComboBox, QLineEdit, QPushButton, QMessageBox, QTextEdit, QGroupBox,
+    QProgressBar, QStatusBar, QSizePolicy, QListWidget, QListWidgetItem, QStackedWidget,
+    QSpacerItem, QScrollArea
+)
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6.QtGui import QIcon, QFont
 
-    QT_API = "PyQt6"
-    SIZE_EXPANDING = QSizePolicy.Policy.Expanding
-    SIZE_MINIMUM = QSizePolicy.Policy.Minimum
-    MSG_YES = QMessageBox.StandardButton.Yes
-    MSG_NO = QMessageBox.StandardButton.No
-    FRAME_VLINE = QFrame.Shape.VLine
-    FRAME_SUNKEN = QFrame.Shadow.Sunken
-except ModuleNotFoundError as exc:
-    if exc.name != "PyQt6":
-        raise
-    from PyQt5.QtWidgets import (
-        QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-        QLabel, QComboBox, QLineEdit, QPushButton, QMessageBox, QTextEdit, QGroupBox,
-        QProgressBar, QStatusBar, QFrame, QSizePolicy, QListWidget, QListWidgetItem, QStackedWidget, QSpacerItem
-    )
-    from PyQt5.QtCore import Qt, QThread, pyqtSignal
-    from PyQt5.QtGui import QIcon, QFont
-
-    QT_API = "PyQt5"
-    SIZE_EXPANDING = QSizePolicy.Expanding
-    SIZE_MINIMUM = QSizePolicy.Minimum
-    MSG_YES = QMessageBox.Yes
-    MSG_NO = QMessageBox.No
-    FRAME_VLINE = QFrame.VLine
-    FRAME_SUNKEN = QFrame.Sunken
+SIZE_EXPANDING = QSizePolicy.Policy.Expanding
+SIZE_MINIMUM = QSizePolicy.Policy.Minimum
+MSG_YES = QMessageBox.StandardButton.Yes
+MSG_NO = QMessageBox.StandardButton.No
 
 
 # ----------------------------
@@ -54,38 +32,124 @@ except ModuleNotFoundError as exc:
 # ----------------------------
 class AppConfig:
     APP_NAME = "北北-Windows 系统优化工具"
-    VERSION = "3.5"
     COMPANY = "北北科技"
     ICON_PATH = "app.ico"
     STYLE_SHEET = """
-        * { font-family: 'Segoe UI', 'Microsoft YaHei'; }
-        QMainWindow { background-color: #F5F7FA; }
+        * {
+            font-family: 'Segoe UI', 'Microsoft YaHei';
+            font-size: 13px;
+            letter-spacing: 0;
+        }
+        QMainWindow { background-color: #EEF3F8; }
+        QWidget#AppRoot { background-color: #EEF3F8; }
+        QWidget#Sidebar {
+            background-color: #122033;
+            border-radius: 12px;
+        }
+        QLabel#BrandTitle {
+            color: #FFFFFF;
+            font-size: 20px;
+            font-weight: 800;
+        }
+        QLabel#BrandSubtitle {
+            color: #9CB2C8;
+            font-size: 12px;
+        }
+        QWidget#ContentPane {
+            background-color: #F7FAFC;
+            border: 1px solid #D9E3EC;
+            border-radius: 12px;
+        }
+        QLabel#PageTitle {
+            color: #162238;
+            font-size: 22px;
+            font-weight: 800;
+        }
+        QLabel#PageSubtitle {
+            color: #66788F;
+            font-size: 13px;
+        }
+        QScrollArea#PageScroll {
+            border: none;
+            background: transparent;
+        }
+        QScrollArea#PageScroll > QWidget > QWidget {
+            background: transparent;
+        }
         QGroupBox {
-            font-weight: 600; border: 1px solid #E5E9F2; border-radius: 8px; margin-top: 18px; padding: 12px;
+            color: #1A2940;
+            font-weight: 700;
+            border: 1px solid #DCE6F0;
+            border-radius: 8px;
+            margin-top: 18px;
+            padding: 14px;
             background: #FFFFFF;
         }
-        QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 6px; color: #556070; }
+        QGroupBox::title {
+            subcontrol-origin: margin;
+            left: 10px;
+            padding: 0 7px;
+            color: #41546D;
+            background-color: #FFFFFF;
+        }
         QPushButton {
-            background-color: #4A90E2; color: #FFFFFF; border: none; border-radius: 6px; padding: 9px 16px; font-weight: 600;
+            background-color: #2F7DD3;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 6px;
+            padding: 9px 14px;
+            font-weight: 700;
+            min-height: 18px;
         }
-        QPushButton:hover { background-color: #3A7BCC; }
-        QPushButton:disabled { background-color: #A0B4D9; }
+        QPushButton:hover { background-color: #2569B7; }
+        QPushButton:pressed { background-color: #1E5D9F; }
+        QPushButton:disabled { background-color: #AEBBCD; color: #EEF3F8; }
         QLineEdit, QComboBox, QTextEdit {
-            border: 1px solid #D0D7E1; border-radius: 6px; padding: 8px; background: #FFFFFF;
+            border: 1px solid #C9D6E3;
+            border-radius: 6px;
+            padding: 8px;
+            background: #FFFFFF;
+            color: #172033;
+            selection-background-color: #2F7DD3;
         }
-        QLabel { color: #2F3746; }
+        QLineEdit:focus, QComboBox:focus, QTextEdit:focus {
+            border: 1px solid #2F7DD3;
+        }
+        QLabel { color: #26354B; }
         QProgressBar {
-            border: 1px solid #D0D7E1; border-radius: 6px; text-align: center; background: #FFFFFF; height: 16px;
+            border: 1px solid #C9D6E3;
+            border-radius: 6px;
+            text-align: center;
+            background: #FFFFFF;
+            height: 16px;
         }
-        QProgressBar::chunk { background-color: #4A90E2; border-radius: 6px; }
+        QProgressBar::chunk { background-color: #22A06B; border-radius: 6px; }
         QStatusBar {
-            background: #F0F2F5; border-top: 1px solid #E5E9F2; color: #6C757D;
+            background: #F7FAFC;
+            border-top: 1px solid #DCE6F0;
+            color: #66788F;
         }
         QListWidget {
-            background: #FFFFFF; border: 1px solid #E5E9F2; border-radius: 8px; padding: 6px;
+            background: transparent;
+            border: none;
+            padding: 6px;
+            outline: none;
+            color: #C7D5E5;
         }
-        QListWidget::item { padding: 10px 12px; margin: 4px; border-radius: 6px; }
-        QListWidget::item:selected { background: #4A90E2; color: #FFFFFF; }
+        QListWidget::item {
+            padding: 12px 12px;
+            margin: 4px 2px;
+            border-radius: 8px;
+        }
+        QListWidget::item:hover {
+            background: #1B314B;
+            color: #FFFFFF;
+        }
+        QListWidget::item:selected {
+            background: #2F7DD3;
+            color: #FFFFFF;
+            font-weight: 800;
+        }
     """
 
 
@@ -1360,10 +1424,18 @@ class SystemSettingsTab(QWidget):
 # 主窗口（左侧列表导航）
 # ----------------------------
 class SystemOptimizer(QMainWindow):
+    PAGE_META = [
+        ("虚拟内存", "分页文件状态与容量配置"),
+        ("系统信息", "快速查看硬件、系统和网络信息"),
+        ("安全警告", "管理下载文件与 Internet 区域提示"),
+        ("电源选项", "休眠和高性能电源计划"),
+        ("系统设置", "计算机名与任务栏偏好"),
+    ]
+
     def __init__(self):
         super().__init__()
         self.config = AppConfig()
-        self.setWindowTitle(f"{self.config.APP_NAME} v{self.config.VERSION}")
+        self.setWindowTitle(self.config.APP_NAME)
 
         icon_path = resource_path(self.config.ICON_PATH)
         if os.path.exists(icon_path):
@@ -1371,19 +1443,58 @@ class SystemOptimizer(QMainWindow):
         else:
             logging.warning(f"图标文件未找到: {icon_path}")
 
-        self.resize(1000, 700)
+        self.resize(1080, 720)
+        self.setMinimumSize(920, 640)
         self.setStyleSheet(self.config.STYLE_SHEET)
 
         root = QWidget()
+        root.setObjectName("AppRoot")
         root_layout = QHBoxLayout()
-        root_layout.setContentsMargins(8, 8, 8, 8)
-        root_layout.setSpacing(8)
+        root_layout.setContentsMargins(12, 12, 12, 12)
+        root_layout.setSpacing(12)
+
+        sidebar = QWidget()
+        sidebar.setObjectName("Sidebar")
+        sidebar.setFixedWidth(220)
+        sidebar_layout = QVBoxLayout()
+        sidebar_layout.setContentsMargins(16, 18, 16, 16)
+        sidebar_layout.setSpacing(10)
+
+        brand_title = QLabel("北北工具箱")
+        brand_title.setObjectName("BrandTitle")
+        brand_subtitle = QLabel("Windows system console")
+        brand_subtitle.setObjectName("BrandSubtitle")
+        brand_subtitle.setWordWrap(True)
+        sidebar_layout.addWidget(brand_title)
+        sidebar_layout.addWidget(brand_subtitle)
+        sidebar_layout.addSpacing(10)
 
         self.nav = QListWidget()
-        self.nav.setFixedWidth(180)
-        for name in ("虚拟内存", "系统信息", "安全警告", "电源选项", "系统设置"):
+        for name, _subtitle in self.PAGE_META:
             self.nav.addItem(QListWidgetItem(name))
         self.nav.setCurrentRow(0)
+        sidebar_layout.addWidget(self.nav)
+        sidebar_layout.addItem(QSpacerItem(10, 10, SIZE_MINIMUM, SIZE_EXPANDING))
+
+        restart_hint = QLabel("需要管理员权限的动作会触发 UAC")
+        restart_hint.setObjectName("BrandSubtitle")
+        restart_hint.setWordWrap(True)
+        sidebar_layout.addWidget(restart_hint)
+        sidebar.setLayout(sidebar_layout)
+
+        content = QWidget()
+        content.setObjectName("ContentPane")
+        content_layout = QVBoxLayout()
+        content_layout.setContentsMargins(20, 18, 20, 18)
+        content_layout.setSpacing(12)
+
+        self.page_title = QLabel()
+        self.page_title.setObjectName("PageTitle")
+        self.page_subtitle = QLabel()
+        self.page_subtitle.setObjectName("PageSubtitle")
+        self.page_subtitle.setWordWrap(True)
+        content_layout.addWidget(self.page_title)
+        content_layout.addWidget(self.page_subtitle)
 
         self.pages = QStackedWidget()
         self.tab_virtual_mem = VirtualMemoryTab()
@@ -1392,36 +1503,51 @@ class SystemOptimizer(QMainWindow):
         self.tab_power_plan = PowerPlanTab()
         self.tab_system_settings = SystemSettingsTab()
 
-        self.pages.addWidget(self.tab_virtual_mem)
-        self.pages.addWidget(self.tab_system_info)
-        self.pages.addWidget(self.tab_security_warn)
-        self.pages.addWidget(self.tab_power_plan)
-        self.pages.addWidget(self.tab_system_settings)
+        for page in (
+            self.tab_virtual_mem,
+            self.tab_system_info,
+            self.tab_security_warn,
+            self.tab_power_plan,
+            self.tab_system_settings,
+        ):
+            self.pages.addWidget(self._wrap_page(page))
 
-        self.nav.currentRowChanged.connect(self.pages.setCurrentIndex)
+        self.nav.currentRowChanged.connect(self.change_page)
+        content_layout.addWidget(self.pages)
+        content.setLayout(content_layout)
 
-        root_layout.addWidget(self.nav)
-        root_layout.addWidget(self.pages)
+        root_layout.addWidget(sidebar)
+        root_layout.addWidget(content)
         root.setLayout(root_layout)
         self.setCentralWidget(root)
+        self.change_page(0)
 
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
-        self.status_bar.showMessage(f"{self.config.APP_NAME} v{self.config.VERSION} | {QT_API} | © {self.config.COMPANY}")
+        self.status_bar.showMessage(f"{self.config.APP_NAME} | © {self.config.COMPANY}")
 
         admin_status = "管理员模式" if is_admin() else "普通用户模式"
         admin_label = QLabel(f"权限: {admin_status}")
-        admin_label.setStyleSheet("color: #5CB85C;" if is_admin() else "color: #D9534F;")
+        admin_label.setStyleSheet("color: #22A06B; font-weight: 700;" if is_admin() else "color: #C2410C; font-weight: 700;")
         self.status_bar.addPermanentWidget(admin_label)
 
-        separator = QFrame()
-        separator.setFrameShape(FRAME_VLINE)
-        separator.setFrameShadow(FRAME_SUNKEN)
-        self.status_bar.addPermanentWidget(separator)
-
         restart_label = QLabel("部分设置需重启生效")
-        restart_label.setStyleSheet("color: #F0AD4E; font-weight: 700;")
+        restart_label.setStyleSheet("color: #B45309; font-weight: 700;")
         self.status_bar.addPermanentWidget(restart_label)
+
+    def _wrap_page(self, page: QWidget) -> QScrollArea:
+        scroll = QScrollArea()
+        scroll.setObjectName("PageScroll")
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QScrollArea.Shape.NoFrame)
+        scroll.setWidget(page)
+        return scroll
+
+    def change_page(self, index: int):
+        self.pages.setCurrentIndex(index)
+        title, subtitle = self.PAGE_META[index]
+        self.page_title.setText(title)
+        self.page_subtitle.setText(subtitle)
 
 
 # ----------------------------
@@ -1434,12 +1560,11 @@ if __name__ == "__main__":
         format="%(asctime)s - %(levelname)s - %(message)s",
         encoding="utf-8",
     )
-    logging.info("应用程序启动（PyQt6）")
+    logging.info("应用程序启动")
 
     app = QApplication(sys.argv)
     app.setFont(QFont("Segoe UI", 10))
 
     window = SystemOptimizer()
     window.show()
-    exec_func = app.exec if hasattr(app, "exec") else app.exec_
-    sys.exit(exec_func())
+    sys.exit(app.exec())
