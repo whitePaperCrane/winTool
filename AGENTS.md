@@ -21,7 +21,6 @@
 - `app.ico`：程序图标，运行和打包时都会使用。
 - `requirements.txt`：依赖列表，当前包含 `PyQt6` 和 `psutil`。
 - `README.md`：给用户看的运行和打包说明。
-- `build_exe.ps1`：完整打包命令。
 - `.gitignore`：忽略虚拟环境、构建产物、日志和临时文件。
 
 ## 当前 UI 设计
@@ -93,7 +92,7 @@
 
 ## 打包
 
-打包命令保存在 `build_exe.ps1`：
+打包时只需要在项目根目录执行命令，不需要提交打包脚本或 exe 产物：
 
 ```powershell
 .\.venv\Scripts\python.exe -m PyInstaller --onefile --windowed --name winTool --icon "app.ico" --add-data "app.ico;." "main.py"
@@ -105,7 +104,7 @@
 dist\winTool.exe
 ```
 
-`build/`、`dist/` 和 `*.spec` 当前被 `.gitignore` 忽略。
+`build/`、`dist/` 和 `*.spec` 当前被 `.gitignore` 忽略，不应提交到仓库。
 
 ## Git 信息
 

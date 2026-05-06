@@ -32,16 +32,10 @@ python -m venv .venv
 
 ## 打包为 exe
 
-完整打包命令已保存到 `build_exe.ps1`：
+后续需要 exe 时，在项目根目录执行下面这条命令即可：
 
 ```powershell
 .\.venv\Scripts\python.exe -m PyInstaller --onefile --windowed --name winTool --icon "app.ico" --add-data "app.ico;." "main.py"
-```
-
-执行打包：
-
-```powershell
-.\build_exe.ps1
 ```
 
 打包产物：
@@ -50,7 +44,7 @@ python -m venv .venv
 dist\winTool.exe
 ```
 
-如果重复打包时 PyInstaller 提示输出目录已存在，请先手动处理旧产物，或在确认可以覆盖后自行追加 PyInstaller 参数。
+`build/`、`dist/` 和 `*.spec` 是本地打包产物，不需要提交到 Git。
 
 ## 注意
 
