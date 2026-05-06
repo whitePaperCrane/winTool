@@ -32,7 +32,15 @@ python -m venv .venv
 
 ## 打包为 exe
 
-后续需要 exe 时，在项目根目录执行下面这条命令即可：
+后续需要 exe 时，在项目根目录执行：
+
+```powershell
+.\build_exe.ps1
+```
+
+脚本用途：将当前 PyQt6 桌面程序打包为单文件 Windows exe。
+
+脚本中的完整命令为：
 
 ```powershell
 .\.venv\Scripts\python.exe -m PyInstaller --onefile --windowed --name winTool --icon "app.ico" --add-data "app.ico;." "main.py"
@@ -44,7 +52,7 @@ python -m venv .venv
 dist\winTool.exe
 ```
 
-`build/`、`dist/` 和 `*.spec` 是本地打包产物，不需要提交到 Git。
+`build_exe.ps1` 可以提交到 Git；`build/`、`dist/` 和 `*.spec` 是本地打包产物，不需要提交。
 
 ## 注意
 
